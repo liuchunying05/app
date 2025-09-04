@@ -1,0 +1,25 @@
+{
+  "name": "情侣应用",
+  "short_name": "情侣应用",
+  "description": "专为情侣设计的温馨应用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#4ecdc4",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "lang": "zh-CN"
+}

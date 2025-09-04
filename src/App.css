@@ -1,0 +1,106 @@
+.app-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  /* 移动端安全区域 */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.app-main {
+  flex: 1;
+  padding-bottom: 64px; /* 预留底部导航高度 */
+  padding-top: 0; /* 头部高度由header自己控制 */
+  /* 移动端滚动优化 */
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* 移动端头部适配 */
+.app-header {
+  background: #fff;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* 安全区域适配 */
+  padding-top: max(12px, env(safe-area-inset-top));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  /* 固定定位 */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 移动端底部导航适配 */
+.app-tab-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 10;
+  /* 安全区域适配 */
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+  /* 阴影效果 */
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 移动端触摸反馈 */
+.touch-feedback {
+  transition: all 0.1s ease;
+}
+
+.touch-feedback:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+/* 移动端响应式 */
+@media (max-width: 480px) {
+  .app-container {
+    max-width: 100%;
+  }
+  
+  .app-header {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-header {
+    padding: 8px 10px;
+  }
+  
+  .app-tab-bar {
+    height: 56px;
+  }
+}
+
+/* 横屏适配 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app-header {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .app-tab-bar {
+    height: 48px;
+  }
+}
