@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/utils/storage.ts
+ * 分类: 工具方法
+ * 作用: 对 localStorage 的安全封装，提供统一的读写删除接口。
+ */
 export type Profile = {
   nickname?: string
   avatar?: string

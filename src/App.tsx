@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/App.tsx
+ * 分类: 应用根组件
+ * 作用: 路由与页面容器，组织全局布局
+ */
 import { Outlet } from 'react-router-dom'
 import './App.css'
 import { TabBar } from './components/TabBar'

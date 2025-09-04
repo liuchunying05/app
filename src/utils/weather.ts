@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/utils/weather.ts
+ * 分类: 工具方法
+ * 作用: 天气相关的工具函数或数据映射，供页面/组件调用。
+ */
 // WMO 天气代码到中文描述的简要映射
 export function wmoToZhDesc(code?: number): string | undefined {
   if (code == null) return undefined

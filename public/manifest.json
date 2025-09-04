@@ -1,4 +1,5 @@
 {
+  "_comment": "文件: public/manifest.json | 分类: PWA | 作用: 应用清单（名称、图标、主题色、显示模式）",
   "name": "情侣应用",
   "short_name": "情侣应用",
   "description": "专为情侣设计的温馨应用",

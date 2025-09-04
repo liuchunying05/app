@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Notes.tsx
+ * 分类: 页面
+ * 作用: 便签/笔记页面，记录与管理文字内容。
+ */
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'

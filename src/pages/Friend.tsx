@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Friend.tsx
+ * 分类: 页面
+ * 作用: 好友/情侣关系页，展示与互动相关内容。
+ */
 import { useEffect, useRef, useState } from 'react'
 
 type Message = { id: string; author: 'me' | 'friend'; text: string; createdAt: string }

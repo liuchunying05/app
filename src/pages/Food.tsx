@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Food.tsx
+ * 分类: 页面
+ * 作用: 吃什么/点餐选择页面，提供随机或筛选功能。
+ */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'

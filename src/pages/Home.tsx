@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Home.tsx
+ * 分类: 页面
+ * 作用: 应用首页，入口聚合与导航。
+ */
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'

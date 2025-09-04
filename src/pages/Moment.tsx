@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Moment.tsx
+ * 分类: 页面
+ * 作用: 动态/时刻页面，记录并展示日常动态内容。
+ */
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import { getFriend, getProfile } from '../utils/storage'

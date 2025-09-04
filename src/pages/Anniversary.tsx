@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Anniversary.tsx
+ * 分类: 页面
+ * 作用: 纪念日页面，记录重要日期并进行展示与提醒（如需）。
+ */
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'

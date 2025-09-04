@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Movie.tsx
+ * 分类: 页面
+ * 作用: 电影推荐/选择页面，与播放器进行联动。
+ */
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'

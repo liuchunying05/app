@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Login.tsx
+ * 分类: 页面
+ * 作用: 登录/鉴权页面，处理用户登录入口（或本地模拟）。
+ */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 

@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Elf.tsx
+ * 分类: 页面
+ * 作用: 趣味/精灵互动页面，提供轻量娱乐交互。
+ */
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'

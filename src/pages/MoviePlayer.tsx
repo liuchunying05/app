@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/MoviePlayer.tsx
+ * 分类: 页面
+ * 作用: 简易播放器页面，演示播放进度与控制（含类型修正）。
+ */
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '../components/Icon'

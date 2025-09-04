@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Roulette.tsx
+ * 分类: 页面
+ * 作用: 抽奖/转盘页面，进行随机选择。
+ */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'

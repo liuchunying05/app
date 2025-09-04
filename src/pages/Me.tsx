@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Me.tsx
+ * 分类: 页面
+ * 作用: 个人中心页，展示个人信息与设置入口。
+ */
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getProfile, setProfile } from '../utils/storage'

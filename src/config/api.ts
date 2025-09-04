@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/config/api.ts
+ * 分类: 配置
+ * 作用: 定义后端 API 地址、请求封装或调试开关（与 utils 中调试工具配合）。
+ */
 // API配置文件
 export const API_CONFIG = {
   // DeepSeek API配置

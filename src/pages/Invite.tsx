@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Invite.tsx
+ * 分类: 页面
+ * 作用: 邀请/绑定页面，用于生成或输入邀请码进行关联。
+ */
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 

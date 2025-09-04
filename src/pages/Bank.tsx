@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/pages/Bank.tsx
+ * 分类: 页面
+ * 作用: 存钱罐/预算记录页面，记录与展示金额变化。
+ */
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'

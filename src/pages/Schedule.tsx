@@ -1,3 +1,9 @@
+/**
+ * 文件名: src/pages/Schedule.tsx
+ * 分类: 页面
+ * 作用: 周视图时间表，支持添加/编辑/删除日程；本地存储与时间冲突校验；
+ *       网格化展示、点击空白格快速创建、历史数据查看。
+ */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '../components/Icon'

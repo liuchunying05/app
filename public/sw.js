@@ -1,3 +1,4 @@
+// 文件: public/sw.js | 分类: PWA | 作用: Service Worker，缓存关键文件以支持离线访问
 const CACHE_NAME = 'couple-app-v1';
 const urlsToCache = [
   '/',

@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/components/TabBar.tsx
+ * 分类: 布局组件
+ * 作用: 底部导航栏，承载主要页面切换
+ */
 import { NavLink } from 'react-router-dom'
 import { Icon } from './Icon'
 

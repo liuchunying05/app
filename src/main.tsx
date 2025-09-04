@@ -1,3 +1,8 @@
+/**
+ * 文件名: src/main.tsx
+ * 分类: 应用入口
+ * 作用: 挂载 React 应用到 DOM，加载全局样式
+ */
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
