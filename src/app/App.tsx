@@ -5,7 +5,7 @@
  */
 import { Outlet } from 'react-router-dom'
 import './App.css'
-import { TabBar } from './components/TabBar'
+import { TabBar } from '../components/TabBar'
 
 function App() {
   const userPhone = localStorage.getItem('userPhone')

@@ -1,4 +1,4 @@
-import { API_CONFIG, SYSTEM_PROMPTS } from '../config/api'
+import { API_CONFIG, SYSTEM_PROMPTS } from '../../app/config/api'
 
 // API调试工具
 export class ApiDebugger {

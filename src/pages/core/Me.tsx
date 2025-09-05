@@ -5,8 +5,8 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getProfile, setProfile } from '../utils/storage'
-import { Icon } from '../components/Icon'
+import { getProfile, setProfile } from '../../utils/platform/storage'
+import { Icon } from '../../components/Icon'
 
 export default function Me() {
   const inputAvatar = useRef<HTMLInputElement | null>(null)

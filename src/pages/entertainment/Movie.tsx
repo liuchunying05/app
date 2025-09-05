@@ -5,7 +5,7 @@
  */
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/Icon'
+import { Icon } from '../../components/Icon'
 
 // 类型定义
 interface MovieItem {
@@ -36,6 +36,14 @@ interface MovieFormData {
   genre: string
   description: string
   duration: string
+}
+
+function resolvePoster(poster?: string): string {
+  const p = poster || ''
+  if (p.startsWith('http') || p.startsWith('data:')) return p
+  if (p.startsWith('/')) return p
+  if (p.startsWith('public/')) return `/${p.slice(7)}`
+  return `/${p}`
 }
 
 // 存储函数
@@ -99,7 +107,7 @@ const defaultMovies: MovieItem[] = [
     id: '1',
     title: '泰坦尼克号',
     type: 'movie',
-    poster: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p457760035.jpg',
+    poster: '/taitan.jpg',
     rating: 9.4,
     year: 1997,
     genre: '爱情/灾难',
@@ -113,7 +121,7 @@ const defaultMovies: MovieItem[] = [
     id: '2',
     title: '肖申克的救赎',
     type: 'movie',
-    poster: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p480747492.jpg',
+    poster: '/xiaoshenke.jpg',
     rating: 9.7,
     year: 1994,
     genre: '剧情/犯罪',
@@ -127,7 +135,7 @@ const defaultMovies: MovieItem[] = [
     id: '3',
     title: '权力的游戏',
     type: 'tv',
-    poster: 'https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2869056072.jpg',
+    poster: '/quanli.jpg',
     rating: 9.3,
     year: 2011,
     genre: '奇幻/剧情',
@@ -141,7 +149,7 @@ const defaultMovies: MovieItem[] = [
     id: '4',
     title: '老友记',
     type: 'tv',
-    poster: 'https://img2.doubanio.com/view/photo/s_ratio_poster/public/p1910895711.jpg',
+    poster: '/laoyouji.jpg',
     rating: 9.7,
     year: 1994,
     genre: '喜剧/爱情',
@@ -155,10 +163,9 @@ const defaultMovies: MovieItem[] = [
 
 // 初始化默认数据
 function initializeDefaultMovies(): void {
-  const existingMovies = getMovies()
-  if (existingMovies.length === 0) {
-    saveMovies(defaultMovies)
-  }
+  // 清除旧的 localStorage 数据，强制使用新的本地图片路径
+  localStorage.removeItem(STORAGE_KEY)
+  saveMovies(defaultMovies)
 }
 
 export default function MoviePage() {
@@ -167,8 +174,10 @@ export default function MoviePage() {
   const [showForm, setShowForm] = useState(false)
   const [showLocalUpload, setShowLocalUpload] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [showPosterModal, setShowPosterModal] = useState(false)
   const [selectedMovie, setSelectedMovie] = useState<MovieItem | null>(null)
   const [filter, setFilter] = useState<'all' | 'movie' | 'tv'>('all')
+  const [posterUrl, setPosterUrl] = useState('')
   const [formData, setFormData] = useState<MovieFormData>({
     title: '',
     type: 'movie',
@@ -229,6 +238,44 @@ export default function MoviePage() {
       setSelectedMovie(null)
       alert('已分享给好友！')
     }
+  }
+
+  const openPosterModal = (movie: MovieItem) => {
+    setSelectedMovie(movie)
+    setPosterUrl(movie.poster || '')
+    setShowPosterModal(true)
+  }
+
+  const onPosterFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      setPosterUrl(String(reader.result || ''))
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
+  const savePoster = () => {
+    if (!selectedMovie) return
+    if (!posterUrl.trim()) { alert('请填写图片链接或上传图片'); return }
+    const val = posterUrl.trim()
+    let normalized = val
+    if (val.startsWith('http') || val.startsWith('data:')) {
+      normalized = val
+    } else if (val.startsWith('/')) {
+      normalized = val
+    } else if (val.startsWith('public/')) {
+      normalized = `/${val.slice(7)}`
+    } else {
+      normalized = `/${val}`
+    }
+    updateMovie(selectedMovie.id, { poster: normalized })
+    setMovies(getMovies())
+    setShowPosterModal(false)
+    setSelectedMovie(null)
+    setPosterUrl('')
   }
 
   const resetForm = () => {
@@ -376,7 +423,7 @@ export default function MoviePage() {
             {/* 海报 */}
             <div style={{ flexShrink: 0 }}>
               <img
-                src={movie.poster}
+                src={resolvePoster(movie.poster)}
                 alt={movie.title}
                 style={{
                   width: 80,
@@ -384,9 +431,7 @@ export default function MoviePage() {
                   borderRadius: 8,
                   objectFit: 'cover'
                 }}
-                onError={(e) => {
-                  e.currentTarget.src = 'https://via.placeholder.com/80x120/ccc/999?text=暂无'
-                }}
+                onError={(e) => { e.currentTarget.src = '/icon/ic-error.svg' }}
               />
             </div>
 
@@ -441,36 +486,50 @@ export default function MoviePage() {
                 {movie.description.length > 60 ? movie.description.slice(0, 60) + '...' : movie.description}
               </div>
 
-                             {/* 操作按钮 */}
-               <div style={{ display: 'flex', gap: 8 }}>
-                 <button
-                   onClick={() => navigate(`/movie/player/${movie.id}`)}
-                   style={{
-                     padding: '6px 12px',
-                     border: '1px solid #4ecdc4',
-                     borderRadius: 6,
-                     background: '#4ecdc4',
-                     color: 'white',
-                     fontSize: 12,
-                     cursor: 'pointer'
-                   }}
-                 >
-                   观看
-                 </button>
-                 <button
-                   onClick={() => handleToggleWatched(movie.id)}
-                   style={{
-                     padding: '6px 12px',
-                     border: '1px solid #ddd',
-                     borderRadius: 6,
-                     background: movie.isWatched ? '#feca57' : 'white',
-                     color: movie.isWatched ? 'white' : '#333',
-                     fontSize: 12,
-                     cursor: 'pointer'
-                   }}
-                 >
-                   {movie.isWatched ? '取消观看' : '标记已看'}
-                 </button>
+              {/* 操作按钮 */}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={() => navigate(`/movie/player/${movie.id}`)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid #4ecdc4',
+                    borderRadius: 6,
+                    background: '#4ecdc4',
+                    color: 'white',
+                    fontSize: 12,
+                    cursor: 'pointer'
+                  }}
+                >
+                  观看
+                </button>
+                <button
+                  onClick={() => openPosterModal(movie)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: 6,
+                    background: 'white',
+                    color: '#333',
+                    fontSize: 12,
+                    cursor: 'pointer'
+                  }}
+                >
+                  设置封面
+                </button>
+                <button
+                  onClick={() => handleToggleWatched(movie.id)}
+                  style={{
+                    padding: '6px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: 6,
+                    background: movie.isWatched ? '#feca57' : 'white',
+                    color: movie.isWatched ? 'white' : '#333',
+                    fontSize: 12,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {movie.isWatched ? '取消观看' : '标记已看'}
+                </button>
                 <button
                   onClick={() => handleShare(movie)}
                   style={{
@@ -806,6 +865,69 @@ export default function MoviePage() {
           </div>
         </div>
       )}
+
+      {/* 设置封面弹窗 */}
+      {showPosterModal && selectedMovie && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: 16,
+            padding: 24,
+            width: '90%',
+            maxWidth: 480
+          }}>
+            <h3 style={{ margin: '0 0 16px 0', textAlign: 'center' }}>设置封面图片</h3>
+            <div style={{ display: 'grid', gap: 12 }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 'bold' }}>图片链接</label>
+                <input
+                  type="url"
+                  value={posterUrl}
+                  onChange={(e) => setPosterUrl(e.target.value)}
+                  placeholder="粘贴图片URL，或下方上传本地图片"
+                  style={{ width: '100%', padding: 12, border: '1px solid #ddd', borderRadius: 8, fontSize: 14 }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: 6, fontSize: 14, fontWeight: 'bold' }}>或上传图片</label>
+                <input type="file" accept="image/*" onChange={onPosterFileChange} />
+                <div style={{ fontSize: 12, color: '#999', marginTop: 6 }}>上传将转为本地 DataURL 存储，刷新后仍可显示。</div>
+              </div>
+              {!!posterUrl && (
+                <div style={{ marginTop: 6 }}>
+                  <div style={{ fontSize: 12, color: '#666', marginBottom: 6 }}>预览</div>
+                  <img src={posterUrl} style={{ width: 120, height: 180, objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }} />
+                </div>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+              <button
+                onClick={() => { setShowPosterModal(false); setSelectedMovie(null); setPosterUrl('') }}
+                style={{ flex: 1, padding: 12, border: '1px solid #ddd', borderRadius: 8, background: 'white', cursor: 'pointer' }}
+              >
+                取消
+              </button>
+              <button
+                onClick={savePoster}
+                style={{ flex: 1, padding: 12, border: 'none', borderRadius: 8, background: '#1677ff', color: '#fff', cursor: 'pointer' }}
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -826,7 +948,7 @@ function LocalUploadForm({ onClose, onSaved }: { onClose: () => void; onSaved: (
       id: Date.now().toString(),
       title: title.trim(),
       type,
-      poster: poster || 'https://via.placeholder.com/80x120/ccc/999?text=本地',
+      poster: poster || '/icon/ic-error.svg',
       rating: 8.0,
       year: new Date().getFullYear(),
       genre: '本地',

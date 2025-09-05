@@ -6,7 +6,7 @@
  */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/Icon'
+import { Icon } from '../../components/Icon'
 import dayjs from 'dayjs'
 import React from 'react'
 

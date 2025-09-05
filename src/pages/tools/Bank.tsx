@@ -6,7 +6,7 @@
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/Icon'
+import { Icon } from '../../components/Icon'
 
 type ExpenseItem = {
   id: string

@@ -6,9 +6,9 @@
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { wmoToZhDesc } from '../utils/weather'
-import { Icon } from '../components/Icon'
-import { getTopAnniversary, getAnniversaryStatus } from '../utils/anniversary'
+import { wmoToZhDesc } from '../../utils/feature/weather'
+import { Icon } from '../../components/Icon'
+import { getTopAnniversary, getAnniversaryStatus } from '../../utils/date/anniversary'
 
 const QUOTES = [
   '做你害怕的事，恐惧自然会消失。',
@@ -71,6 +71,11 @@ export default function Home() {
   }, [])
 
   const today = dayjs().format('YYYY年MM月DD日 ddd')
+  const daysSinceMet = useMemo(() => {
+    const storedMetAt = localStorage.getItem('metAt') || dayjs().format('YYYY-MM-DD')
+    const days = dayjs().diff(dayjs(storedMetAt), 'day') + 1
+    return Math.max(1, days)
+  }, [])
 
   return (
     <div style={{ padding: 16 }}>
@@ -97,13 +102,12 @@ export default function Home() {
         </section>
       )}
 
-      <section style={{ margin: '12px 0', position: 'relative' }}>
-        <div style={{ height: 2, background: '#eaeaea' }} />
-        <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', background: '#f7f8fa', padding: '0 8px', fontSize: 12, color: '#666' }}>
-          我们认识第 <b>{Math.max(1, dayjs().diff(dayjs(localStorage.getItem('metAt') || dayjs().format('YYYY-MM-DD')), 'day') + 1)}</b> 天
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+      <section style={{ margin: '12px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Avatar key={`me-${avatarRefreshTick}-${nicknameRefreshTick}`} who="me" />
+          <div style={{ flex: 1 }}>
+            <EcgDivider days={daysSinceMet} />
+          </div>
           <Avatar key={`friend-${nicknameRefreshTick}`} who="friend" />
         </div>
       </section>
@@ -128,6 +132,17 @@ function Avatar({ who }: { who: 'me' | 'friend' }) {
   )
 }
 
+function EcgDivider({ days }: { days: number }) {
+  return (
+    <div style={{ position: 'relative', height: 40 }}>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', transform: 'translateY(-50%)', height: 2, background: '#eaeaea' }} />
+      <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, calc(-100% - 6px))', fontSize: 12, color: '#666', whiteSpace: 'nowrap' }}>
+        我们认识第 <span style={{ fontSize: 18, fontWeight: 700, color: '#ff4d4f', letterSpacing: 1, fontVariantNumeric: 'tabular-nums' }}>{days}</span> 天
+      </div>
+    </div>
+  )
+}
+
 function Grid() {
   const navigate = useNavigate()
   const items = [
@@ -139,6 +154,7 @@ function Grid() {
     { key: 'eat', label: '吃饭', path: '/food' },
     { key: 'movie', label: '看电影', path: '/movie' },
     { key: 'roulette', label: '转盘', path: '/roulette' },
+    { key: 'games', label: '小游戏', path: '/games' },
   ]
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
@@ -161,6 +177,7 @@ function mapIcon(key: string): string {
   if (key === 'eat') return 'ic-eat'
   if (key === 'movie') return 'ic-movie'
   if (key === 'roulette') return 'zhuanpan'
+  if (key === 'games') return 'ic-game'
   return 'ic-more'
 }
 

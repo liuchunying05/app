@@ -5,7 +5,15 @@
  */
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Icon } from '../components/Icon'
+import { Icon } from '../../components/Icon'
+function resolvePoster(poster?: string): string {
+  const p = poster || ''
+  if (p.startsWith('http') || p.startsWith('data:')) return p
+  if (p.startsWith('/')) return p
+  if (p.startsWith('public/')) return `/${p.slice(7)}`
+  return `/${p}`
+}
+
 
 // 类型定义
 interface MovieItem {
@@ -170,7 +178,7 @@ export default function MoviePlayerPage() {
            position: 'relative',
            width: '100%',
            height: '100vh',
-           background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${movie.poster})`,
+           background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${resolvePoster(movie.poster)})`,
            backgroundSize: 'cover',
            backgroundPosition: 'center',
            display: 'flex',
@@ -344,7 +352,7 @@ export default function MoviePlayerPage() {
       }}>
         <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
           <img
-            src={movie.poster}
+            src={resolvePoster(movie.poster)}
             alt={movie.title}
             style={{
               width: 80,
@@ -352,9 +360,7 @@ export default function MoviePlayerPage() {
               borderRadius: 8,
               objectFit: 'cover'
             }}
-            onError={(e) => {
-              e.currentTarget.src = 'https://via.placeholder.com/80x120/ccc/999?text=暂无'
-            }}
+            onError={(e) => { e.currentTarget.src = '/icon/ic-error.svg' }}
           />
           <div style={{ flex: 1 }}>
             <h2 style={{ margin: '0 0 8px 0', fontSize: 18 }}>{movie.title}</h2>

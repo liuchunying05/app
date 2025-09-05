@@ -8,21 +8,28 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import Home from './pages/Home'
-import Moment from './pages/Moment'
-import Me from './pages/Me'
-import Login from './pages/Login'
-import FriendPage from './pages/Friend'
-import InvitePage from './pages/Invite'
-import AnniversaryPage from './pages/Anniversary'
-import SchedulePage from './pages/Schedule'
-import MoviePage from './pages/Movie'
-import MoviePlayerPage from './pages/MoviePlayer'
-import ElfPage from './pages/Elf'
-import RoulettePage from './pages/Roulette'
-import FoodPage from './pages/Food'
-import BankPage from './pages/Bank'
-import NotesPage from './pages/Notes'
+import Home from '../pages/core/Home.tsx'
+import Moment from '../pages/core/Moment.tsx'
+import Me from '../pages/core/Me.tsx'
+import Login from '../pages/core/Login.tsx'
+import FriendPage from '../pages/core/Friend.tsx'
+import InvitePage from '../pages/core/Invite.tsx'
+import AnniversaryPage from '../pages/tools/Anniversary.tsx'
+import SchedulePage from '../pages/tools/Schedule.tsx'
+import MoviePage from '../pages/entertainment/Movie.tsx'
+import MoviePlayerPage from '../pages/entertainment/MoviePlayer.tsx'
+import ElfPage from '../pages/entertainment/Elf.tsx'
+import RoulettePage from '../pages/entertainment/Roulette.tsx'
+import FoodPage from '../pages/entertainment/Food.tsx'
+import BankPage from '../pages/tools/Bank.tsx'
+import NotesPage from '../pages/tools/Notes.tsx'
+import GamesPage from '../pages/games/Games.tsx'
+import GomokuPage from '../pages/games/Gomoku.tsx'
+import ChessPage from '../pages/games/Chess.tsx'
+import Match3Page from '../pages/games/Match3.tsx'
+import SnakePage from '../pages/games/Snake.tsx'
+import TetrisPage from '../pages/games/Tetris.tsx'
+import PuzzlePage from '../pages/games/Puzzle.tsx'
 
 // 登录保护组件
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -65,6 +72,13 @@ const router = createBrowserRouter([
       { path: 'bank', element: <BankPage /> },
       { path: 'notes', element: <NotesPage /> },
       { path: 'roulette', element: <RoulettePage /> },
+      { path: 'games', element: <GamesPage /> },
+      { path: 'games/gomoku', element: <GomokuPage /> },
+      { path: 'games/chess', element: <ChessPage /> },
+      { path: 'games/match3', element: <Match3Page /> },
+      { path: 'games/snake', element: <SnakePage /> },
+      { path: 'games/tetris', element: <TetrisPage /> },
+      { path: 'games/puzzle', element: <PuzzlePage /> },
     ],
   },
 ])

@@ -39,7 +39,7 @@ export default function Login() {
         })
       }, 1000)
       
-    } catch (error) {
+    } catch {
       alert('发送失败，请重试')
     } finally {
       setIsLoading(false)
@@ -68,7 +68,7 @@ export default function Login() {
       localStorage.setItem('userPhone', phone)
       navigate('/')
       
-    } catch (error) {
+    } catch {
       alert('登录失败，请重试')
     } finally {
       setIsLoading(false)

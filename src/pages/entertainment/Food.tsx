@@ -5,7 +5,7 @@
  */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/Icon'
+import { Icon } from '../../components/Icon'
 
 // 菜系类型定义
 interface Cuisine {

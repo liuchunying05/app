@@ -1,4 +1,4 @@
-import { API_CONFIG } from '../config/api'
+import { API_CONFIG } from '../../app/config/api'
 
 // API连接测试函数
 export async function testDeepSeekConnection(): Promise<{

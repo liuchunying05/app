@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/Icon'
+import { Icon } from '../../components/Icon'
 import * as echarts from 'echarts'
 
 type RouletteItem = { id: string; text: string }
@@ -35,17 +35,34 @@ const readDuration = (): number => {
 }
 const saveDuration = (n: number) => localStorage.setItem('roulette_duration', String(n))
 
+const readSpeed = (): number => {
+  const raw = localStorage.getItem('roulette_speed')
+  const n = raw ? Number(raw) : 360
+  if (isNaN(n)) return 360
+  return Math.min(1080, Math.max(60, n))
+}
+const saveSpeed = (n: number) => localStorage.setItem('roulette_speed', String(n))
+
 export default function RoulettePage() {
   const navigate = useNavigate()
   const [items, setItems] = useState<RouletteItem[]>(readItems())
   const [duration, setDuration] = useState<number>(readDuration())
+  const [speed, setSpeed] = useState<number>(readSpeed())
   const [editing, setEditing] = useState(false)
   const [spinning, setSpinning] = useState(false)
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
+  const angleRef = useRef<number>(0)
+  const rafIdRef = useRef<number | null>(null)
+  const lastTsRef = useRef<number | null>(null)
+  const angularVelocityRef = useRef<number>(360) // 度/秒
 
   useEffect(() => saveItems(items), [items])
   useEffect(() => saveDuration(duration), [duration])
+  useEffect(() => saveSpeed(speed), [speed])
+  useEffect(() => {
+    angularVelocityRef.current = speed
+  }, [speed])
 
   const colors = useMemo(() => {
     const palette = ['#ff6b6b', '#4ecdc4', '#54a0ff', '#feca57', '#5f27cd', '#96ceb4', '#45b7d1', '#ff9ff3']
@@ -90,7 +107,7 @@ export default function RoulettePage() {
     }
 
     chartInstance.current = echarts.init(chartRef.current)
-    chartInstance.current.setOption(createChartOption())
+    chartInstance.current.setOption(createChartOption(angleRef.current, false))
 
     return () => {
       if (chartInstance.current) {
@@ -99,43 +116,39 @@ export default function RoulettePage() {
     }
   }, [items, colors])
 
-  const start = () => {
-    if (spinning || items.length === 0 || !chartInstance.current) return
-    
-    setSpinning(true)
-    
-    // 先快速旋转几圈，营造一直转的效果
-    let currentAngle = 0
-    let spinCount = 0
-    const maxSpins = 8 + Math.floor(Math.random() * 4) // 8-11圈
-    
-    const spinInterval = setInterval(() => {
-      spinCount++
-      currentAngle += 30 // 每次旋转30度，营造快速旋转效果
-      
-      // 更新转盘角度
-      chartInstance.current?.setOption(createChartOption(currentAngle, false))
-      
-      // 达到最大圈数后，随机选择一个结果并停止
-      if (spinCount >= maxSpins * 12) { // 12 * 30度 = 360度
-        clearInterval(spinInterval)
-        
-        // 随机选择结果
-        const targetIndex = Math.floor(Math.random() * items.length)
-        const anglePerItem = 360 / items.length
-        
-        // 计算最终角度：让目标项停在12点方向（指针位置）
-        // 由于ECharts的startAngle是从3点开始，我们需要让目标项的中心对准12点
-        const finalAngle = 270 - (targetIndex * anglePerItem + anglePerItem / 2)
-        
-        // 最后缓慢旋转到目标位置
-        chartInstance.current?.setOption(createChartOption(finalAngle, true))
-        
-        // 立即停止旋转状态，与转盘停止同步
-        setSpinning(false)
-      }
-    }, 50) // 每50ms旋转一次，营造快速旋转效果
+  const frame = (ts: number) => {
+    if (!chartInstance.current) return
+    if (lastTsRef.current == null) {
+      lastTsRef.current = ts
+    }
+    const dt = (ts - lastTsRef.current) / 1000
+    lastTsRef.current = ts
+    angleRef.current = (angleRef.current + angularVelocityRef.current * dt) % 360
+    chartInstance.current.setOption(createChartOption(angleRef.current, false))
+    rafIdRef.current = requestAnimationFrame(frame)
   }
+
+  const toggleSpin = () => {
+    if (items.length === 0 || !chartInstance.current) return
+    if (spinning) {
+      if (rafIdRef.current != null) {
+        cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = null
+      }
+      lastTsRef.current = null
+      setSpinning(false)
+    } else {
+      setSpinning(true)
+      rafIdRef.current = requestAnimationFrame(frame)
+    }
+  }
+
+  // 卸载时确保停止动画
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current)
+    }
+  }, [])
 
   const addItem = () => {
     const text = prompt('请输入候选项：')
@@ -161,8 +174,8 @@ export default function RoulettePage() {
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 'bold' }}>🎯 转盘</h1>
           <div style={{ opacity: 0.85, fontSize: 14 }}>自定义候选项与时长，随机选一个</div>
         </div>
-        <button onClick={() => navigate('/')} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}>
-          <Icon name="ic-back" size={20} alt="返回" />
+        <button onClick={() => setEditing(true)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}>
+          <Icon name="ic-add" size={20} alt="添加" />
         </button>
       </header>
 
@@ -209,8 +222,8 @@ export default function RoulettePage() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginTop: 20 }}>
-        <button onClick={start} disabled={spinning || items.length === 0} style={{ padding: '12px 24px', background: '#4ecdc4', color: '#fff', border: 'none', borderRadius: 10, cursor: spinning ? 'not-allowed' : 'pointer', fontSize: 16 }}>
-          {spinning ? '旋转中…' : '开始'}
+        <button onClick={toggleSpin} disabled={items.length === 0} style={{ padding: '12px 24px', background: '#4ecdc4', color: '#fff', border: 'none', borderRadius: 10, cursor: 'pointer', fontSize: 16 }}>
+          {spinning ? '暂停' : '开始'}
         </button>
       </div>
 
@@ -221,6 +234,21 @@ export default function RoulettePage() {
             <div style={{ marginBottom: 14 }}>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>旋转时长（秒）</div>
               <input type="number" min={1} value={duration} onChange={(e) => setDuration(Math.max(1, Number(e.target.value) || 1))} style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 8 }} />
+            </div>
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>旋转速度（度/秒）</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input
+                  type="range"
+                  min={60}
+                  max={1080}
+                  step={60}
+                  value={speed}
+                  onChange={(e) => setSpeed(Math.min(1080, Math.max(60, Number(e.target.value) || 60)))}
+                  style={{ flex: 1 }}
+                />
+                <span style={{ width: 70, textAlign: 'right' }}>{speed}°/秒</span>
+              </div>
             </div>
             <div style={{ fontWeight: 600, margin: '8px 0' }}>候选项</div>
             {items.map((it) => (

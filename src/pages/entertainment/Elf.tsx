@@ -5,10 +5,10 @@
  */
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '../components/Icon'
-import { API_CONFIG, SYSTEM_PROMPTS, getErrorMessage } from '../config/api'
+import { Icon } from '../../components/Icon'
+import { API_CONFIG, SYSTEM_PROMPTS, getErrorMessage } from '../../app/config/api'
 
-import { ApiDebugger } from '../utils/debugApi'
+import { ApiDebugger } from '../../utils/api/debugApi'
 
 // 消息类型定义
 interface Message {

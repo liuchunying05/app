@@ -10,11 +10,11 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#4ecdc4" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="情侣应用" />
     <link rel="manifest" href="/manifest.json" />
-    <title>情侣应用</title>
+    <title>应用</title>
     <style>
       /* 防止iOS橡皮筋效果 */
       html, body {
@@ -56,20 +56,32 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/app/main.tsx"></script>
     <script>
-      // 注册Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration);
+      // 在开发环境（http 或 localhost）卸载并禁用 Service Worker，避免缓存拦截模块脚本
+      (function() {
+        const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'http:'
+        if ('serviceWorker' in navigator) {
+          if (isLocal) {
+            navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister()))
+            // 同时尝试清除缓存
+            if (window.caches && caches.keys) {
+              caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)))
+            }
+          } else {
+            // 仅在 HTTPS 生产环境注册 SW
+            window.addEventListener('load', () => {
+              navigator.serviceWorker.register('/sw.js')
+                .then((registration) => {
+                  console.log('SW registered: ', registration)
+                })
+                .catch((err) => {
+                  console.log('SW registration failed: ', err)
+                })
             })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
-        });
-      }
+          }
+        }
+      })()
     </script>
   </body>
 </html>

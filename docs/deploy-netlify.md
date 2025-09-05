@@ -1,4 +1,9 @@
-# 使用Netlify Drop部署
+# # GitHub Pages
+    ### 步骤步骤：
+1. 在GitHub上创建一个新仓库
+2. 将代码推送到GitHub
+3. 在仓库设置中启用GitHub Pages
+4. 选择部署分支为 \`gh-pages\`
 
 ## 步骤：
 1. 访问 https://app.netlify.com/drop
